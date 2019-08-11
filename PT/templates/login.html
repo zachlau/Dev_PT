@@ -1,0 +1,65 @@
+{% extends 'index_base.html' %}
+
+{% block head %}
+<div style="margin-top: 50px">
+    <h3 style="color: whitesmoke">如果未注册用户，请先访问注册页面</h3>
+    <h3 style="margin-left: 150px"><a href="/index/register/" style="margin-top: 10px" class="btn btn-warning btn-lg"> <i style="margin-right: 10px" class="fa fa-pencil-square-o" aria-hidden="true"></i>注册 </a></h3>
+</div>
+{% endblock %}
+
+{% block content %}
+<h2 style="color: whitesmoke">用户登录<i style="float: right" class="fa fa-user-o fa-2x"></i></h2>
+<h3 style="color: whitesmoke">填写以下信息，完成登录：</h3>
+{#<form action="/index/api/login/" method="post">#}
+{#  <div class="form-group" id="user_form">#}
+{#    <input type="text" class="form-control" name="username" placeholder="用户名">#}
+{#  </div>#}
+{#  <div class="form-group" id="password_form">#}
+{#    <input required="required" type="password" class="form-control" name="password" placeholder="密码">#}
+{#  </div>#}
+{#  <button id="login" style="font-size: 20px" class="btn btn-success form-control">登录</button>#}
+{#</form>#}
+
+
+<form>
+  <div class="form-group" id="user_form">
+    <input type="text" class="form-control" name="username" placeholder="用户名">
+  </div>
+  <div class="form-group" id="password_form">
+    <input required="required" type="password" class="form-control" name="password" placeholder="密码">
+  </div>
+  <a id="login" style="font-size: 20px" class="btn btn-success form-control">登录</a>
+</form>
+
+<script>
+
+      $("#login").click(function () {
+          var username = $("input[name='username']").val();
+          var password = $("input[name='password']").val();
+          $.post('/index/api/login/', {username:username, password:password}, function (data) {
+                if(data.flag == true){
+                    alert("登录成功");
+                    window.location.href = '/index/home/'
+                }else if(data.flag == false) {
+                    alert(data.info);
+                }
+          });
+      });
+
+{#    $("#login").click(function () {#}
+{#        $("#user_form").removeClass("has-error");#}
+{#        $("#user_form").removeClass("has-success");#}
+{#        $("#helpBlock1").remove();#}
+{#        var a = $("input[name='username']").val();#}
+{#        if(a == ""){#}
+{#            alert("用户名不能为空");#}
+{#            $("#user_form").addClass("has-error");#}
+{#            $("#user_form").append("<span id=\"helpBlock1\" class=\"help-block\">用户名不能为空</span>")#}
+{#        }else {#}
+{#            $("#user_form").addClass("has-success");#}
+{#        }#}
+{##}
+{#    });#}
+
+</script>
+{% endblock %}

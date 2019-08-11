@@ -1,0 +1,95 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>新增需求</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'font-awesome-4.7.0/css/font-awesome.min.css' %}">
+    <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+</head>
+<body>
+    <div class="container-fluid" style="margin-top: 100px">
+        <h3>修改需求页面
+            <a href="/index/task/" class="btn btn-warning" style="margin-left: 10px">
+                <i class="fa fa-backward" style="margin-right: 5px"></i>返回
+            </a>
+        </h3>
+
+        <div class="row" style="margin-top: 40px">
+            <div class="col-lg-6 col-md-6">
+                <form action="/index/api/task_new/" method="post">
+                  <div class="form-group" id="name-form">
+                    <label for="exampleInputEmail1">需求名称</label>
+                    <input value="{{ task.name }}" type="text" class="form-control" name="name" placeholder="名称不能重复">
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputPassword1">所属项目</label>
+                    <select class="form-control" name="project">
+                        {% for p in projects %}
+                            <option value="{{ p.id }}">{{ p.name }}</option>
+                        {% endfor %}
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputPassword1">需求分类</label>
+                    <select class="form-control" name="category">
+                        <option value="0">功能测试</option>
+                        <option value="1">自动化测试</option>
+                        <option value="2">性能测试</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputPassword1">负责人</label>
+                    <select class="form-control" name="user">
+                        {% for u in users %}
+                            <option value="{{ u.id }}">{{ u.username }}</option>
+                        {% endfor %}
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputPassword1">初始状态</label>
+                    <select class="form-control" name="status">
+                        <option value="0">需求确认</option>
+                        <option value="1">测试准备</option>
+                        <option value="2">测试进行</option>
+                        <option value="3">测试收尾</option>
+                        <option value="4">等待上线</option>
+                        <option value="5">结束归档</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                        <button id="submit" type="submit" class="disabled form-control btn btn-primary">提交</button>
+                  </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+       $("input[name='name']").blur(function () {
+            $("#name-form").removeClass('has-error');
+            $("#name-form").removeClass('has-success');
+            $("span.help-block").remove();
+            $("#submit").addClass('disabled');
+            var name =  $("input[name='name']").val();
+            if(name != '' ){
+                $.get('?name='+name, function (data) {
+                if (data.flag == true){
+                        $("#name-form").addClass('has-error');
+                        $("#name-form").append("<span class=\"help-block\">需求名称已存在</span>");
+                }else{
+                        $("#name-form").addClass('has-success');
+                        $("#name-form").append("<span class=\"help-block\">需求名称可用</span>");
+                        $("#submit").removeClass('disabled');
+                }
+            });
+            }else {
+                        $("#name-form").addClass('has-error');
+                        $("#name-form").append("<span class=\"help-block\">需求名称必填</span>");
+            }
+       });
+    </script>
+</body>
+</html>

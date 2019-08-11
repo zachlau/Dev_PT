@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div style="margin-top: -50px" id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+  <!-- Indicators -->
+  <ol class="carousel-indicators">
+    <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+    <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+    <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+  </ol>
+
+  <!-- Wrapper for slides -->
+  <div class="carousel-inner" role="listbox">
+    <div class="item active">
+      <img src="{% static 'img/2.png' %}" alt="...">
+      <div class="carousel-caption" style="margin-bottom: 50px">
+          <h2>API测试</h2>
+          <h3>零编码，通过配置即可进行接口测试</h3>
+          <h3>测试数据统一维护</h3>
+      </div>
+    </div>
+    <div class="item">
+      <img src="{% static 'img/2.png' %}"  alt="...">
+      <div class="carousel-caption" style="margin-bottom: 50px">
+          <h2>模板管理</h2>
+          <h3>更简单，接口信息统一录入、集中维护</h3>
+          <h3>让关联调用更加容易</h3>
+      </div>
+    </div>
+
+    <div class="item">
+      <img src="{% static 'img/2.png' %}"  alt="...">
+      <div class="carousel-caption" style="margin-bottom: 50px">
+          <h2>任务驱动</h2>
+          <h3>更灵活，按不同维度组织你的测试</h3>
+          <h3>任意选择接口用例</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</div>
+
+     <div class="row text-center" style="margin-top: 20px">
+                <div class="box" style="margin-top: 20px">
+          <h3 style="font-weight:bold;" class="text">常用功能</h3>
+        </div>
+
+        <div  class="col-lg-4 col-md-4 col-sm-4">
+            <h3 style="color: #122b40"><i class="fa fa-tasks fa-2x" aria-hidden="true"></i></h3>
+            <a href="/index/task/" style="margin-top: 5px" class="btn btn-success">测试任务管理</a>
+        </div>
+        <div  class="col-lg-4 col-md-4 col-sm-4">
+            <h3 style="color:#5bc0de"><i class="fa fa-cogs fa-2x" aria-hidden="true"></i></h3>
+            <a href="/index/cases/" style="margin-top: 5px" class="btn btn-warning">接口测试用例</a>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-4">
+            <h3 style="color: #255625"><i class="fa fa-bar-chart fa-2x" aria-hidden="true"></i></h3>
+            <a style="margin-top: 5px" class="btn btn-danger">测试报告管理</a>
+        </div>
+    </div>
+
+{% endblock %}

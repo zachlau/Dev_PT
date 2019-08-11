@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <title>安卓应用渠道打包</title>#}
+{#    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">#}
+{#    <link rel="stylesheet" href="{% static 'font-awesome-4.7.0/css/font-awesome.min.css' %}">#}
+{#    <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>#}
+{#    <script src="{% static 'js/bootstrap.min.js' %}"></script>#}
+{#</head>#}
+{#<body>#}
+{#    <div class="container-fluid" style="margin-top: 100px">#}
+{% block content %}
+        <h3>安卓应用渠道打包
+            <a href="/index/home/" class="btn btn-warning" style="margin-left: 10px">
+                <i class="fa fa-backward" style="margin-right: 5px"></i>返回
+            </a>
+        </h3>
+        <form id="uploadForm" enctype="multipart/form-data" style="margin-top: 40px" action="/index/upload_apk/" method="post">
+          <div class="form-group">
+            <input type="file"  name="apk_file">
+            <p style="margin-top: 20px" class="help-block">请在此上传apk原始文件</p>
+          </div>
+          <a id="upload" class="btn btn-success">上传</a>
+        </form>
+
+        <form id="confirm_form" style="margin-top: 30px;display: none" action="/index/api/run_apk/" method="post">
+            <h3 style="width: 150px" class="bg-primary">请选择渠道：</h3>
+            <label class="radio-inline">
+              <input type="radio" class="qudao" name="qudao" value="huawei"> 华为市场
+            </label>
+            <label class="radio-inline">
+              <input type="radio" class="qudao" name="qudao" value="yingyongbao"> 应用宝
+            </label>
+            <label class="radio-inline">
+              <input type="radio" class="qudao" name="qudao" value="oppo"> OPPO
+            </label>
+            <div class="form-group" style="margin-top: 20px">
+                <button type="submit" id="confirm" class="btn btn-danger">开始打包</button>
+            </div>
+            <input type="text" name="file_name" id="file_name" style="display: none">
+        </form>
+{#    </div>#}
+
+    <script>
+        $("#upload").click(function () {
+            $("#confirm_form").css('display', 'none');
+            var formData = new FormData($('#uploadForm')[0]);
+            $.ajax({
+                url: '/index/upload_apk/',
+                type:'POST',
+                cache: false,
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function(data){
+                    if(data.flag == true){
+                        alert('apk包上传成功！');
+                        $("#confirm_form").css('display', 'block');
+                        $("#file_name").val(data.name);
+                    }else {
+                        alert('apk包上传失败！');
+                    }
+                },
+                error: function(err) {
+                    alert('apk包上传失败！');
+                }
+            });
+        });
+
+{#        $("#confirm").click(function () {#}
+{#            var file_name = $("#file_name").val();#}
+{#            var qudao = $(".qudao:checked").val();#}
+{#            if(qudao!=null){#}
+{#                $.post('/index/api/run_apk/', {name: file_name, qudao: qudao}, function (data) {#}
+{#                    if(data.flag==false){#}
+{#                        alert("打包失败！");#}
+{#                        window.location.reload();#}
+{#                    }#}
+{#                })#}
+{#            }else {#}
+{#                alert("请选择要打包的渠道名称");#}
+{#            }#}
+{#        });#}
+
+    </script>
+{#</body>#}
+{#</html>#}
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <h3>接口用例批量上传
+        <a href="/index/task/" class="btn btn-warning" style="margin-left: 10px">
+            <i class="fa fa-backward" style="margin-right: 5px"></i>返回
+        </a>
+    </h3>
+    <form enctype="multipart/form-data" style="margin-top: 40px" action="/index/upload_cases/" method="post">
+      <div class="form-group">
+        <input type="file"  name="case_file">
+        <p style="margin-top: 20px" class="help-block">请在此上传本地excel文件</p>
+      </div>
+      <button type="submit" class="btn btn-success">上传</button>
+    </form>
+{% endblock %}

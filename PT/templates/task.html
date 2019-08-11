@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+        <div class="row">
+            <div class="col-lg-2 col-md-2">
+                <a href="/index/task/new/" class="btn btn-lg btn-success"><i class="fa fa-magic" style="margin-right: 5px"></i>新建需求</a>
+            </div>
+            <div class="col-lg-9 col-md-9">
+                <form class="form-inline">
+                  <div class="form-group">
+                    <label style="font-size: 18px;font-weight: bold">按项目筛选：</label>
+                    <select  id="project" class="form-control input-lg">
+                        <option value="0">全部</option>
+                        {% for p in projects %}
+                            <option value="{{ p.id }}">{{ p.name }}</option>
+                        {% endfor %}
+                    </select>
+                  </div>
+                  <div class="form-group" style="margin-left: 20px">
+                    <label style="font-size: 18px;font-weight: bold" for="exampleInputEmail2">关键词搜索：</label>
+                    <input type="text" class="form-control input-lg" id="keywords" placeholder="模糊搜索">
+                  </div>
+                  <a  id="search" class="btn btn-primary btn-lg">查询</a>
+                </form>
+            </div>
+
+        </div>
+
+        <div class="row" style="margin-top: 20px">
+            <div class="col-lg-12 col-md-12">
+                <table class="table table-striped">
+                    <thead>
+                        <th>ID</th>
+                        <th>需求名称</th>
+                        <th>所属项目</th>
+                        <th>分类</th>
+                        <th>负责人</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </thead>
+                    <tbody>
+                        {% for task in tasks %}
+                            <tr>
+                                <td>{{ task.id}}</td>
+                                <td>{{task.name}}</td>
+                                <td>{{task.project__name}}</td>
+                                {% if task.category == 0 %}
+                                    <td>功能测试</td>
+                                {% elif task.category == 1 %}
+                                    <td>自动化测试</td>
+                                {% elif task.category == 2 %}
+                                    <td>性能测试</td>
+                                {% endif %}
+                                <td>{{task.user__username}}</td>
+                                {% if task.status == 0 %}
+                                    <td>需求确认</td>
+                                {% elif task.status == 1 %}
+                                    <td>测试准备</td>
+                                {% elif task.status == 2 %}
+                                    <td>测试进行</td>
+                                {% elif task.status == 3 %}
+                                    <td>测试收尾</td>
+                                {% elif task.status == 4 %}
+                                    <td>等待上线</td>
+                                {% elif task.status == 5 %}
+                                    <td>结束归档</td>
+                                {% endif %}
+
+                                <td>
+                                    <a href="/index/task/update?pid={{ task.id }}" class="update btn btn-warning" style="margin-right: 5px">编辑</a>
+                                    <button data-whatever="{{ task.id }}" data-toggle="modal" data-target="#guidang" class="btn btn-success" style="margin-right: 5px">归档</button>
+                                    <button data-whatever="{{ task.id }}" class="btn btn-danger delete" data-toggle="modal" data-target="#myModal" style="margin-right: 5px">删除</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">确认</h4>
+          </div>
+          <div class="modal-body">
+            <p>是否确认删除该测试任务？</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            <button id="confirm" type="button" data-dismiss="modal" class="btn btn-primary">确定</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+    <div class="modal fade" id="guidang" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">确认归档</h4>
+          </div>
+          <div class="modal-body">
+            <p>是否将该项目归入历史记录？</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            <button id="confirm1" type="button" class="btn btn-primary">确定</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+    <script>
+        $("#project").change(function () {
+            var p = $("#project").val();
+            $.get('/index/api/get_task/?project='+p, function (data) {
+                if(data.tasks.length >0){
+                    $("tbody").empty();
+                    for(var i=0;i<data.tasks.length;i++){
+                        $("tbody").append("<tr>" +
+                            "<td>"+data.tasks[i].id+"</td>" +
+                            "<td>"+data.tasks[i].name+"</td>" +
+                             "<td>"+data.tasks[i].project__name+"</td>" +
+                             "<td>"+data.tasks[i].category+"</td>" +
+                             "<td>"+data.tasks[i].user__username+"</td>" +
+                             "<td>"+data.tasks[i].status+"</td>" +
+                             "<td><a href=\"/index/task/update?pid=" +data.tasks[i].id+"\"" + "class=\"update btn btn-warning\" style=\"margin-right: 5px\">编辑</a> <button class=\"btn btn-success\" data-toggle=\"modal\" data-target=\"#guidang\" style=\"margin-right: 5px\">归档</button><button data-toggle=\"modal\" data-target=\"#myModal\" class=\"btn btn-danger\" style=\"margin-right: 5px\">删除</button></td>" +
+                            "</tr>");
+                    }
+                }else {
+                    alert("未找到符合条件的需求!");
+                    window.location.reload();
+                }
+            })
+        });
+
+        $("#search").click(function () {
+            var kw = $("#keywords").val();
+            $.get('/index/api/get_task/?keyword='+kw, function (data) {
+                if(data.tasks.length >0){
+                    $("tbody").empty();
+                    for(var i=0;i<data.tasks.length;i++){
+                        $("tbody").append("<tr>" +
+                            "<td>"+data.tasks[i].id+"</td>" +
+                            "<td>"+data.tasks[i].name+"</td>" +
+                             "<td>"+data.tasks[i].project__name+"</td>" +
+                             "<td>"+data.tasks[i].category+"</td>" +
+                             "<td>"+data.tasks[i].user__username+"</td>" +
+                             "<td>"+data.tasks[i].status+"</td>" +
+                             "<td><button class=\"update btn btn-warning\" style=\"margin-right: 5px\">编辑</button> <button class=\"btn btn-success\" data-toggle=\"modal\" data-target=\"#guidang\" style=\"margin-right: 5px\">归档</button><button class=\"btn btn-danger\" data-toggle=\"modal\" data-target=\"#myModal\" style=\"margin-right: 5px\">删除</button></td>" +
+                            "</tr>");
+                    }
+                }else {
+                    alert("未找到符合条件的需求!");
+                    window.location.reload();
+                }
+            });
+        });
+
+        $('#myModal').on('show.bs.modal', function (event) {
+          var button = $(event.relatedTarget);
+          var pid = button.data('whatever');
+          var modal = $(this);
+          modal.find('#confirm').attr('value', pid);
+        });
+
+        $('#guidang').on('show.bs.modal', function (event) {
+          var button = $(event.relatedTarget);
+          var pid = button.data('whatever');
+          var modal = $(this);
+          modal.find('#confirm1').attr('value', pid);
+        });
+
+
+        $("#confirm").click(function () {
+            $.get('/index/api/delete_task?pid='+$(this).val(),function (data) {
+                if(data.flag == true){
+                    alert('删除成功');
+                }else {
+                    alert('删除失败');
+                }
+                window.location.reload();
+            });
+        });
+
+        $("#confirm1").click(function () {
+            $.get('/index/api/guidang_task?pid='+$(this).val(),function (data) {
+                if(data.flag == true){
+                    alert('归档成功');
+                }else {
+                    alert('归档失败');
+                }
+                window.location.reload();
+            });
+        });
+
+{#        $(".update").on('click', function () {#}
+{#            alert(1)#}
+{#        });#}
+
+        $("tbody").on('click', ".update", function () {
+            $.get(function (data) {
+
+            })
+        });
+
+{#        $(".update").click(function () {#}
+{#            alert(1)#}
+{#        });#}
+    </script>
+{% endblock%}

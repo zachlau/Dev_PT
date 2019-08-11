@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block content %}
+        <div class="row">
+            <div class="col-lg-9 col-md-9">
+                <form class="form-inline">
+                  <fieldset>
+                  <div class="form-group">
+                    <label style="font-size: 18px;font-weight: bold">按接口名称筛选：</label>
+                    <select  id="project" class="form-control input-lg">
+                        <option value="0">全部</option>
+                    </select>
+                  </div>
+                  <div class="form-group" style="margin-left: 20px">
+                    <label style="font-size: 18px;font-weight: bold" for="exampleInputEmail2">关键词搜索：</label>
+                    <input type="text" class="form-control input-lg" id="keywords" placeholder="模糊搜索">
+                  </div>
+                  <a id="search" class="btn btn-primary btn-lg">查询</a>
+                  <a id="run" style="margin-left: 10px" class="btn btn-success btn-lg"><i class="fa fa-fighter-jet" style="margin-right: 5px"></i>批量执行</a>
+                  </fieldset>
+                </form>
+            </div>
+
+        </div>
+
+        <div class="row" style="margin-top: 20px">
+            <div class="col-lg-12 col-md-12">
+                <table class="table table-striped">
+                    <thead>
+                    <th>选择<button id="all" style="margin-left: 5px">全选</button></th>
+                        <th>ID</th>
+                        <th>用例名称</th>
+                        <th>用例描述</th>
+                        <th>操作</th>
+                    </thead>
+                    <tbody>
+                        {% for case in cases %}
+                            <tr>
+                                <td><input class="checks" value="{{ case.id}}" type="checkbox"></td>
+                                <td>{{ case.id}}</td>
+                                <td>{{case.number}}</td>
+                                <td>{{case.desc}}</td>
+                                <td>
+                                    <button class="btn btn-warning" style="margin-right: 5px">编辑</button>
+                                    <button class="btn btn-danger delete" style="margin-right: 5px">删除</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <h3 style="color:coral;text-align: center;margin-top: 20px;display: none">
+                    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+                    执行中
+                </h3>
+                <iframe id="report" src="" style="height: 1200px; width: 1200px;margin-top: 20px;display: none"></iframe>
+            </div>
+        </div>
+
+    <script>
+        $("table.table").on('click', '#all', function () {
+            $("input.checks").prop('checked', true);
+            $(this).text("取消");
+            $(this).attr("id", "cancel");
+        });
+
+        $("table.table").on('click', '#cancel', function () {
+            $("input.checks").prop('checked', false);
+            $(this).text("全选");
+            $(this).attr("id", "all");
+        });
+
+        $("#run").click(function () {
+            var cases = $("input.checks:checked");
+            var ids = Array();
+            for (var i=0; i<cases.length; i++){
+                ids[i] = cases[i].value;
+            }
+            if(ids.join('&') != ''){
+                $("fieldset").attr("disabled", "disabled");
+                var id_string = ids.join('&');
+                $.post('/index/api/run_cases/', {ids: id_string}, function (data) {
+                    $("h3").css("display", 'none');
+                    if(data.flag == true){
+                        $("#report").css("display", 'block');
+                        $("#report").attr("src", data.url)
+                    }
+                    else {
+                        alert("用例执行异常!");
+                        window.location.reload();
+                    }
+                });
+                $("table").empty();
+                $("h3").css("display", 'block');
+            }else {
+                alert("请至少选择一个测试用例！")
+            }
+
+        });
+    </script>
+{% endblock %}
